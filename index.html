@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PoliteraX — Регистрация</title>
+    <meta
+      name="description"
+      content="Официальная регистрация на сервер PoliteraX через Telegram-бота с выбором Minecraft или ely.by аккаунта."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="card">
+        <header class="hero">
+          <span class="pill">Официальный сайт PoliteraX</span>
+          <h1>Регистрация на <span>PoliteraX</span></h1>
+          <p class="subtitle">
+            Для входа на сервер нужно подтвердить регистрацию через Telegram-бота.
+            Выбери тип аккаунта: <strong>Minecraft</strong> или <strong>ely.by</strong>.
+          </p>
+        </header>
+
+        <ol class="steps">
+          <li>Заполни форму ниже.</li>
+          <li>Нажми «Продолжить в Telegram».</li>
+          <li>Бот завершит привязку аккаунта к серверу.</li>
+        </ol>
+
+        <form id="register-form" class="form" novalidate>
+          <label class="field">
+            <span>Ник в Minecraft</span>
+            <input
+              id="nickname"
+              name="nickname"
+              type="text"
+              minlength="3"
+              maxlength="16"
+              placeholder="Например: PoliteraXPlayer"
+              autocomplete="nickname"
+              required
+            />
+          </label>
+
+          <label class="field">
+            <span>Telegram username</span>
+            <input
+              id="telegram"
+              name="telegram"
+              type="text"
+              placeholder="Например: @username"
+              autocomplete="username"
+              required
+            />
+          </label>
+
+          <fieldset class="field auth-methods">
+            <legend>Тип аккаунта</legend>
+            <label>
+              <input type="radio" name="authMethod" value="minecraft" checked />
+              Minecraft аккаунт
+            </label>
+            <label>
+              <input type="radio" name="authMethod" value="elyby" />
+              ely.by аккаунт
+            </label>
+          </fieldset>
+
+          <label class="agree">
+            <input id="rules" type="checkbox" required />
+            <span>Я принимаю правила сервера PoliteraX.</span>
+          </label>
+
+          <button type="submit" class="btn">Продолжить в Telegram</button>
+
+          <div class="fallback" id="fallback" hidden>
+            <p>Если Telegram не открылся автоматически, нажми:</p>
+            <a id="bot-link" href="#" target="_blank" rel="noopener noreferrer">Открыть бота</a>
+            <button type="button" id="copy-command" class="btn ghost">Скопировать команду /start</button>
+            <code id="start-command"></code>
+          </div>
+
+          <p id="status" class="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
