@@ -5,7 +5,7 @@ const botLinkEl = document.getElementById('bot-link');
 const startCommandEl = document.getElementById('start-command');
 const copyCommandButton = document.getElementById('copy-command');
 
-const TELEGRAM_BOT = 'PoliteraXBot';
+const TELEGRAM_BOT = 'politerax_auth_bot';
 
 function showStatus(message, type = '') {
   statusEl.textContent = message;
@@ -29,7 +29,7 @@ function buildStartParam({ nickname, telegram, authMethod }) {
   const safeNick = nickname.replace(/[^a-zA-Z0-9_]/g, '').slice(0, 16);
   const safeTg = telegram.replace(/[^a-zA-Z0-9_@]/g, '').replace('@', '').slice(0, 32);
   const safeAuth = authMethod === 'elyby' ? 'elyby' : 'minecraft';
-  return `reg_${safeAuth}_${safeNick}_${safeTg}`.slice(0, 64);
+  return `auth_${safeAuth}_${safeNick}_${safeTg}`.slice(0, 64);
 }
 
 function showFallback(botUrl, startParam) {
@@ -44,7 +44,7 @@ async function copyStartCommand() {
 
   try {
     await navigator.clipboard.writeText(value);
-    showStatus('Команда /start скопирована в буфер обмена.', 'success');
+    showStatus('Команда /start для аутентификации скопирована в буфер обмена.', 'success');
   } catch {
     showStatus('Не удалось скопировать команду. Скопируй вручную из блока ниже.', 'error');
   }
@@ -74,7 +74,7 @@ form.addEventListener('submit', (event) => {
   }
 
   if (!rulesAccepted) {
-    showStatus('Нужно принять правила сервера.', 'error');
+    showStatus('Нужно принять правила сервера, чтобы продолжить аутентификацию.', 'error');
     return;
   }
 
@@ -82,6 +82,6 @@ form.addEventListener('submit', (event) => {
   const botUrl = `https://t.me/${TELEGRAM_BOT}?start=${startParam}`;
 
   showFallback(botUrl, startParam);
-  showStatus('Переход в Telegram... Если не открылось, используй кнопку и команду ниже.', 'success');
+  showStatus('Переход в Telegram-бота аутентификации... Если не открылось, используй кнопку и команду ниже.', 'success');
   window.open(botUrl, '_blank', 'noopener,noreferrer');
 });
