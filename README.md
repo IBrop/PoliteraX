@@ -1,12 +1,12 @@
-# PoliteraX Registration Landing
+# PoliteraX Authentication Landing
 
-Официальная страница регистрации для сервера **PoliteraX**.
+Официальная страница аутентификации для сервера **PoliteraX**.
 
 ## Что делает сайт
 - Собирает ник Minecraft.
 - Запрашивает Telegram username.
 - Позволяет выбрать тип аккаунта: **Minecraft** или **ely.by**.
-- Переводит пользователя в Telegram-бота `@PoliteraXBot` с параметром `/start`.
+- Переводит пользователя в Telegram-бота `@politerax_auth_bot` с параметром `/start`.
 - Показывает fallback-блок с ссылкой и готовой командой `/start`, если Telegram не открылся автоматически.
 
 ## Запуск локально
