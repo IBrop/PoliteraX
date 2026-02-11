@@ -1,87 +1,91 @@
-const form = document.getElementById('register-form');
-const statusEl = document.getElementById('status');
-const fallbackEl = document.getElementById('fallback');
-const botLinkEl = document.getElementById('bot-link');
-const startCommandEl = document.getElementById('start-command');
-const copyCommandButton = document.getElementById('copy-command');
-
 const TELEGRAM_BOT = 'politerax_auth_bot';
+const TEST_PROFILE = 'IBrop_test';
 
-function showStatus(message, type = '') {
-  statusEl.textContent = message;
-  statusEl.className = `status ${type}`.trim();
+const guestView = document.getElementById('guest-view');
+const authView = document.getElementById('auth-view');
+const guestStatus = document.getElementById('guest-status');
+const authStatus = document.getElementById('auth-status');
+const tokenInfo = document.getElementById('token-info');
+const profileSelect = document.getElementById('profile-select');
+const loginBtn = document.getElementById('login-btn');
+const enterProfileBtn = document.getElementById('enter-profile-btn');
+
+function setStatus(element, message, type = '') {
+  element.textContent = message;
+  element.className = `status ${type}`.trim();
 }
 
-function normalizeTg(value) {
-  const cleaned = value.trim().replace(/^@+/, '');
-  return cleaned ? `@${cleaned}` : '';
+function getParams() {
+  const params = new URLSearchParams(window.location.search);
+  return {
+    authToken: params.get('auth_token') || '',
+    profile: params.get('profile') || '',
+    profiles: params.get('profiles') || '',
+  };
 }
 
-function validNickname(name) {
-  return /^[a-zA-Z0-9_]{3,16}$/.test(name);
+function buildStartPayload() {
+  return `auth_minecraft_${TEST_PROFILE}_telegramtest`;
 }
 
-function validTelegram(username) {
-  return /^@[a-zA-Z0-9_]{5,32}$/.test(username);
-}
-
-function buildStartParam({ nickname, telegram, authMethod }) {
-  const safeNick = nickname.replace(/[^a-zA-Z0-9_]/g, '').slice(0, 16);
-  const safeTg = telegram.replace(/[^a-zA-Z0-9_@]/g, '').replace('@', '').slice(0, 32);
-  const safeAuth = authMethod === 'elyby' ? 'elyby' : 'minecraft';
-  return `auth_${safeAuth}_${safeNick}_${safeTg}`.slice(0, 64);
-}
-
-function showFallback(botUrl, startParam) {
-  botLinkEl.href = botUrl;
-  startCommandEl.textContent = `/start ${startParam}`;
-  fallbackEl.hidden = false;
-}
-
-async function copyStartCommand() {
-  const value = startCommandEl.textContent;
-  if (!value) return;
-
-  try {
-    await navigator.clipboard.writeText(value);
-    showStatus('Команда /start для аутентификации скопирована в буфер обмена.', 'success');
-  } catch {
-    showStatus('Не удалось скопировать команду. Скопируй вручную из блока ниже.', 'error');
-  }
-}
-
-copyCommandButton.addEventListener('click', () => {
-  copyStartCommand();
-});
-
-form.addEventListener('submit', (event) => {
-  event.preventDefault();
-
-  const formData = new FormData(form);
-  const nickname = String(formData.get('nickname') || '').trim();
-  const telegram = normalizeTg(String(formData.get('telegram') || ''));
-  const authMethod = String(formData.get('authMethod') || 'minecraft');
-  const rulesAccepted = document.getElementById('rules').checked;
-
-  if (!validNickname(nickname)) {
-    showStatus('Ник должен быть от 3 до 16 символов и содержать только буквы, цифры и _.', 'error');
-    return;
-  }
-
-  if (!validTelegram(telegram)) {
-    showStatus('Введи корректный Telegram username в формате @username.', 'error');
-    return;
-  }
-
-  if (!rulesAccepted) {
-    showStatus('Нужно принять правила сервера, чтобы продолжить аутентификацию.', 'error');
-    return;
-  }
-
-  const startParam = buildStartParam({ nickname, telegram, authMethod });
-  const botUrl = `https://t.me/${TELEGRAM_BOT}?start=${startParam}`;
-
-  showFallback(botUrl, startParam);
-  showStatus('Переход в Telegram-бота аутентификации... Если не открылось, используй кнопку и команду ниже.', 'success');
+function openTelegramLogin() {
+  const payload = buildStartPayload();
+  const botUrl = `https://t.me/${TELEGRAM_BOT}?start=${payload}`;
+  setStatus(
+    guestStatus,
+    'Открываю Telegram. Подтверди вход и нажми кнопку, чтобы вернуться на сайт с токеном.',
+    'success'
+  );
   window.open(botUrl, '_blank', 'noopener,noreferrer');
-});
+}
+
+function uniqueProfiles(profile, profilesRaw) {
+  const list = profilesRaw
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  if (profile) list.unshift(profile);
+  if (!list.includes(TEST_PROFILE)) list.push(TEST_PROFILE);
+
+  return [...new Set(list)];
+}
+
+function renderAuthorized(authToken, selectedProfile, profilesRaw) {
+  guestView.hidden = true;
+  authView.hidden = false;
+
+  const profiles = uniqueProfiles(selectedProfile, profilesRaw);
+  profileSelect.innerHTML = '';
+
+  profiles.forEach((profileName) => {
+    const option = document.createElement('option');
+    option.value = profileName;
+    option.textContent = profileName;
+    profileSelect.appendChild(option);
+  });
+
+  tokenInfo.textContent = `Токен получен: ${authToken.slice(0, 8)}... Выбери профиль и продолжи.`;
+  setStatus(authStatus, 'Авторизация через Telegram подтверждена.', 'success');
+}
+
+function enterProfile() {
+  const selected = profileSelect.value;
+  localStorage.setItem('politeraxProfile', selected);
+  setStatus(authStatus, `Готово! Вход выполнен в профиль: ${selected}`, 'success');
+}
+
+function init() {
+  loginBtn.addEventListener('click', openTelegramLogin);
+  enterProfileBtn.addEventListener('click', enterProfile);
+
+  const { authToken, profile, profiles } = getParams();
+  if (!authToken) {
+    setStatus(guestStatus, 'Для входа используй кнопку «Войти в аккаунт».');
+    return;
+  }
+
+  renderAuthorized(authToken, profile, profiles);
+}
+
+init();
