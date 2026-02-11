@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PoliteraX — Аутентификация</title>
+    <title>PoliteraX — Войти в аккаунт</title>
     <meta
       name="description"
-      content="Официальная аутентификация на сервер PoliteraX через Telegram-бота с выбором Minecraft или ely.by аккаунта."
+      content="Вход в аккаунт PoliteraX через Telegram-бота и выбор Minecraft-профиля."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -19,76 +19,29 @@
   <body>
     <main class="page">
       <section class="card">
-        <header class="hero">
-          <span class="pill">Официальный сайт PoliteraX</span>
-          <h1>Аутентификация на <span>PoliteraX</span></h1>
-          <p class="subtitle">
-            Для входа на сервер нужно подтвердить аккаунт через Telegram-бота.
-            Выбери тип аккаунта: <strong>Minecraft</strong> или <strong>ely.by</strong>.
-          </p>
-        </header>
+        <span class="pill">PoliteraX</span>
+        <h1>Главная страница</h1>
+        <p class="subtitle">
+          Войди через Telegram, затем выбери привязанный Minecraft-профиль и продолжи игру.
+        </p>
 
-        <ol class="steps">
-          <li>Заполни форму ниже.</li>
-          <li>Нажми «Продолжить в Telegram».</li>
-          <li>Бот завершит аутентификацию и привязку аккаунта к серверу.</li>
-        </ol>
+        <div id="guest-view" class="panel">
+          <h2>Ты не авторизован</h2>
+          <p>Нажми кнопку ниже, чтобы войти в аккаунт через Telegram-бота.</p>
+          <button id="login-btn" class="btn">Войти в аккаунт</button>
+          <p id="guest-status" class="status" aria-live="polite"></p>
+        </div>
 
-        <form id="register-form" class="form" novalidate>
+        <div id="auth-view" class="panel" hidden>
+          <h2>Выбор профиля</h2>
+          <p id="token-info" class="muted"></p>
           <label class="field">
-            <span>Ник в Minecraft</span>
-            <input
-              id="nickname"
-              name="nickname"
-              type="text"
-              minlength="3"
-              maxlength="16"
-              placeholder="Например: PoliteraXPlayer"
-              autocomplete="nickname"
-              required
-            />
+            <span>Профиль из Telegram</span>
+            <select id="profile-select"></select>
           </label>
-
-          <label class="field">
-            <span>Telegram username</span>
-            <input
-              id="telegram"
-              name="telegram"
-              type="text"
-              placeholder="Например: @username"
-              autocomplete="username"
-              required
-            />
-          </label>
-
-          <fieldset class="field auth-methods">
-            <legend>Тип аккаунта</legend>
-            <label>
-              <input type="radio" name="authMethod" value="minecraft" checked />
-              Minecraft аккаунт
-            </label>
-            <label>
-              <input type="radio" name="authMethod" value="elyby" />
-              ely.by аккаунт
-            </label>
-          </fieldset>
-
-          <label class="agree">
-            <input id="rules" type="checkbox" required />
-            <span>Я принимаю правила сервера PoliteraX и подтверждаю данные.</span>
-          </label>
-
-          <button type="submit" class="btn">Продолжить в Telegram</button>
-
-          <div class="fallback" id="fallback" hidden>
-            <p>Если Telegram не открылся автоматически, нажми:</p>
-            <a id="bot-link" href="#" target="_blank" rel="noopener noreferrer">Открыть бота</a>
-            <button type="button" id="copy-command" class="btn ghost">Скопировать команду /start</button>
-            <code id="start-command"></code>
-          </div>
-
-          <p id="status" class="status" aria-live="polite"></p>
-        </form>
+          <button id="enter-profile-btn" class="btn">Войти в профиль</button>
+          <p id="auth-status" class="status" aria-live="polite"></p>
+        </div>
       </section>
     </main>
 
